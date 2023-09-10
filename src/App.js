@@ -1,9 +1,9 @@
 import './App.css'
-import SimpleInput from './components/SimpleInput'
+import Form from './components/Form/Form'
 
 function App() {
     return (
-        <SimpleInput/>
+        <Form />
     )
 }
 
