@@ -1,30 +1,43 @@
 import Input from '../Input/Input'
-import {useEffect, useState} from 'react'
+import useInput from '../../hooks/useInput'
+
+const validators = {
+    email(value) {
+        return value.includes('@') ? null : 'Please enter a valid email address.'
+    },
+    password(value) {
+        return value.length >= 6 ? null : 'Password needs to be at least 6 characters.'
+    },
+}
 
 const Form = (props) => {
-    const [email, setEmail] = useState('')
-    const [isEmailValid, setIsEmailValid] = useState(undefined)
 
-    const [password, setPassword] = useState('')
-    const [isPasswordValid, setIsPasswordValid] = useState(undefined)
+    const {
+        value: email,
+        isValid: isEmailValid,
+        error: emailError,
+        onChange: onEmailChanged,
+    } = useInput(validators.email)
+
+    const {
+        value: password,
+        isValid: isPasswordValid,
+        error: passwordError,
+        onChange: onPasswordChanged,
+    } = useInput(validators.password)
 
     const isFormValid = isEmailValid === true && isPasswordValid === true
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setIsEmailValid(email.includes('@'))
-            setIsPasswordValid(password.trim().length >= 6)
-        }, 500)
-        return () => {
-            clearTimeout(timeoutId)
+    function onSubmit(event) {
+        event.preventDefault()
+        if (!isFormValid) {
+            return
         }
-    }, [
-        email,
-        password,
-    ])
+        console.log('form submitted', {event})
+    }
 
     return (
-        <form>
+        <form onSubmit={onSubmit}>
             <div className='control-group'>
                 <Input
                     label={'Email'}
@@ -32,7 +45,8 @@ const Form = (props) => {
                     type={'email'}
                     value={email}
                     isValid={isEmailValid}
-                    onChange={({currentTarget}) => setEmail(currentTarget.value)}
+                    error={emailError}
+                    onChange={onEmailChanged}
                 />
                 <Input
                     label={'Password'}
@@ -40,7 +54,8 @@ const Form = (props) => {
                     type={'password'}
                     value={password}
                     isValid={isPasswordValid}
-                    onChange={({currentTarget}) => setPassword(currentTarget.value)}
+                    error={passwordError}
+                    onChange={onPasswordChanged}
                 />
             </div>
             <div className='form-actions'>

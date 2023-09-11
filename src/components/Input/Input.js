@@ -15,6 +15,7 @@ export default function Input(props) {
                 value={props.value}
                 onChange={props.onChange}
             />
+            {props.isValid === false && <p className={classes.error}>{props.error}</p>}
         </div>
     )
 }
